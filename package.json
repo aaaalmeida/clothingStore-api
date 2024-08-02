@@ -1,5 +1,34 @@
 {
+  "name": "clothingstore-api",
+  "version": "1.0.0",
+  "description": "clothing store api",
+  "main": "app.js",
+  "scripts": {
+    "dev": "tsx watch src/App.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaaalmeida/clothingStore-api.git"
+  },
+  "keywords": [
+    "RESTful",
+    "nodejs",
+    "typescript",
+    "mongodb",
+    "atlas"
+  ],
+  "author": "aaalmeida",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaaalmeida/clothingStore-api/issues"
+  },
+  "homepage": "https://github.com/aaaalmeida/clothingStore-api#readme",
   "dependencies": {
     "mongodb": "^6.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.2",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
   }
 }

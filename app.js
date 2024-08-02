@@ -1,4 +1,6 @@
-const url = 'mongodb+srv://arthurfonsecaalmeida:ejNzS1mxaUFsZasj@cluster0.zcdzc2v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+// const url = process.env.MONGODB_URL;
+const url = 'mongodb+srv://arthurfonsecaalmeida:ejNzS1mxaUFsZasj@cluster0.zcdzc2v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
 const { MongoClient } = require('mongodb');
 const client = new MongoClient(url);
 async function run() {
@@ -6,7 +8,7 @@ async function run() {
     const database = client.db("db1")
     const collection = database.collection('collection1')
 
-    const object = { name: 'esther', age: 12 }
+    const object = { name: 'isaac', age: 8 }
     const insert = await collection.insertOne(object)
 
     console.log(insert)
