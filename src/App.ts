@@ -1,16 +1,25 @@
-require('dotenv/config')
-const url = process.env.MONGODB_URL;
+const express = require('express')
+const app = express()
+const port = 3000
 
-import { MongoClient } from 'mongodb';
-const client = new MongoClient(url!);
-async function run() {
-  try {
-    const query = { "title": "In the Land of the Head Hunters" }
-    const projection = { title: true, genres: true, year: true }
-    console.log(await client.db('sample_mflix').collection('movies').findOne(query, { projection }))
-  } finally {
-    await client.close()
-  }
-}
+app.get('/', (req, res) => {
+  res.send(`Ola mundo ${port}`)
+})
 
-run().catch(console.dir)
+app.listen(port, () => {
+  console.log(`Servidor na porta ${port}`)
+}).finally(app.close())
+// import { MongoClient } from 'mongodb';
+// const client = new MongoClient(url!);
+
+// async function run() {
+//   try {
+//     const query = { "title": "In the Land of the Head Hunters" }
+//     const projection = { title: true, genres: true, year: true }
+//     console.log(await client.db('sample_mflix').collection('movies').findOne(query, { projection }))
+//   } finally {
+//     await client.close()
+//   }
+// }
+
+// run().catch(console.dir)
