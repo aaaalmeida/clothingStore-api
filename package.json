@@ -15,7 +15,8 @@
     "nodejs",
     "typescript",
     "mongodb",
-    "atlas"
+    "atlas",
+    "express"
   ],
   "author": "aaalmeida",
   "license": "ISC",

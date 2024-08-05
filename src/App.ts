@@ -8,7 +8,6 @@ if (!url) {
   throw new Error("MONGODB_URL not defined");
 }
 
-import express from 'express';
 import { MongoClient } from 'mongodb';
 const mongoClient = new MongoClient(url!);
 
@@ -17,8 +16,8 @@ const run = async () => {
     await mongoClient.connect();
     const query = { "title": "In the Land of the Head Hunters" }
     const projection = { title: true, genres: true, year: true }
-    const response = await mongoClient.db('sample_mflix').collection('movies').findOne(query, { projection })
-    
+    // const response = await mongoClient.db('sample_mflix').collection('movies').findOne(query, { projection })
+    const response = await mongoClient.db('db1').collection('collection1').findOne({nome: 'Sarah'}) 
     return response
   } catch (err) {
     console.dir(err)
@@ -28,13 +27,17 @@ const run = async () => {
   }
 }
 
+import express from 'express';
 const server = express()
+server.use(express.json())
 
 server.get('/', async (req, res) => {
   const movie = await run()
-  res.send(`Ola mundo ${JSON.stringify(movie)}`)
+  res.send(movie)
 })
 
-server.listen(port, () => {
-  console.log(`Servidor na porta ${port}`)
-})
+// server.post('/', async (req, res) => {
+//   const 
+// })
+
+server.listen(port, () => {})
