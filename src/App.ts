@@ -14,8 +14,8 @@ const mongoClient = new MongoClient(url!);
 const run = async () => {
   try {
     await mongoClient.connect();
-    const query = { "title": "In the Land of the Head Hunters" }
-    const projection = { title: true, genres: true, year: true }
+    // const query = { "title": "In the Land of the Head Hunters" }
+    // const projection = { title: true, genres: true, year: true }
     // const response = await mongoClient.db('sample_mflix').collection('movies').findOne(query, { projection })
     const response = await mongoClient.db('db1').collection('collection1').findOne({nome: 'Sarah'}) 
     return response

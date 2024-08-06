@@ -11,12 +11,14 @@
     "url": "git+https://github.com/aaaalmeida/clothingStore-api.git"
   },
   "keywords": [
+    "REST",
     "RESTful",
     "nodejs",
     "typescript",
     "mongodb",
     "atlas",
-    "express"
+    "express",
+    "zod"
   ],
   "author": "aaalmeida",
   "license": "ISC",
@@ -27,7 +29,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongodb": "^6.8.0"
+    "mongodb": "^6.8.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
