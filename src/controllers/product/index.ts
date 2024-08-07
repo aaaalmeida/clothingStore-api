@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb"
-import { InvalidMongoURLException, UndefinedMongoURLException} from "../../exceptions/MongoUrlException"
+import { InvalidMongoURLException, UndefinedMongoURLException} from "@exceptions"
 
 import dotenv from 'dotenv'
 dotenv.config();

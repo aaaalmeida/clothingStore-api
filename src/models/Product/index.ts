@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const productSchema = z.object({
+export const productSchema = z.object({
   name: z
     .string({ required_error: "Name is required" })
     .max(100, { message: 'Name must be lower than 100 characters' }),
@@ -32,5 +32,3 @@ const productSchema = z.object({
     }),
 
 })
-
-export default productSchema;
