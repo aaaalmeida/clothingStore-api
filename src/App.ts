@@ -1,43 +1,15 @@
+import express, { Request, Response } from 'express'
+import { testRouter } from '@routes/test/index'
 import dotenv from 'dotenv'
-dotenv.config();
 
-const port = process.env.SERVER_PORT;
-const url = process.env.MONGODB_URL;
+dotenv.config()
 
-if (!url) {
-  throw new Error("MONGODB_URL not defined");
-}
+const app = express()
 
-import { MongoClient } from 'mongodb';
-const mongoClient = new MongoClient(url!);
+const PORT = process.env.SERVER_PORT
 
-const run = async () => {
-  try {
-    await mongoClient.connect();
-    // const query = { "title": "In the Land of the Head Hunters" }
-    // const projection = { title: true, genres: true, year: true }
-    // const response = await mongoClient.db('sample_mflix').collection('movies').findOne(query, { projection })
-    const response = await mongoClient.db('db1').collection('collection1').findOne({nome: 'Sarah'}) 
-    return response
-  } catch (err) {
-    console.dir(err)
-  }
-  finally {
-    await mongoClient.close()
-  }
-}
+app.use(express.json())
 
-import express from 'express';
-const server = express()
-server.use(express.json())
+app.use('/', testRouter)
 
-server.get('/', async (req, res) => {
-  const movie = await run()
-  res.send(movie)
-})
-
-// server.post('/', async (req, res) => {
-//   const 
-// })
-
-server.listen(port, () => {})
+app.listen(PORT, () => console.log(`server on port ${PORT}`))
