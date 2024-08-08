@@ -1,12 +1,13 @@
-import express, { Router } from 'express'
+import { Router, Request, Response } from 'express'
 import { productSchema } from "@models/product/index"
-const router = express.Router()
 
-// router.get('/product', async (req, res) => {
-//   try {
-//     const data = productSchema.parse(req.body)
+export const productRouter = Router()
 
-//   } catch (error) {
+productRouter.get('/', async (req: Request, res: Response) => {
+  try {
+    const data = productSchema.parse(req.body)
 
-//   }
-// })
+  } catch (error) {
+
+  }
+})
