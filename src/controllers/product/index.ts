@@ -1,9 +1,13 @@
-import { MongoClient } from "mongodb"
+import { MongoClient, ObjectId } from "mongodb"
 import { UndefinedMongoURLException } from "@exceptions/UndefinedMongoURLException"
 import { UndefinedMongoRegexException } from "@exceptions/UndefinedMongoRegexException"
 import { InvalidMongoURLException } from "@exceptions/InvalidMongoURLException"
-import { productSchema } from "@models/product/index"
+import { productSchema } from "@models/product/productSchema"
 import { ZodError } from "zod"
+import { CloseMongoConnectionException } from "@exceptions/CloseMongoConnectionException"
+import { IProduct } from "@models/product/IProduct"
+import { ObjectValidationException } from "@exceptions/ObjectValidationException"
+import { ObjectNotFoundException } from "@exceptions/ObjectNotFoundException"
 
 const url = process.env.MONGODB_URL
 const url_regex_string = process.env.MONGODB_URL_REGEX
@@ -27,44 +31,60 @@ const mongoClient = new MongoClient(url)
 */
 
 
-const addProduct = async (data: object) => {
+const addProduct = async (data: IProduct) => {
   try {
     await mongoClient.connect()
     const product = productSchema.parse(data)
-
-    return mongoClient.db(db_name).collection(collectionName).insertOne(product)
+    return await mongoClient.db(db_name).collection(collectionName).insertOne(product)
   } catch (err) {
-    if (err instanceof ZodError) throw err // TODO: melhorar tratamento de erro
+    if (err instanceof ZodError) throw new ObjectValidationException('Product')
   } finally {
-    mongoClient.close()
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
   }
 }
 
 const findOneProduct = async (productId: string) => {
   try {
     await mongoClient.connect()
-    return mongoClient.db(db_name).collection(collectionName).findOne({ "_id": productId })
+    const product = await mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(productId) })
+    if (!product) throw new ObjectNotFoundException("Product", productId)
+    return product
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   } finally {
-    mongoClient.close()
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
   }
 }
 
 const findManyProducts = async (productsId: string[]) => {
   try {
     await mongoClient.connect()
-
     const set = new Set()
     productsId.forEach(id => set.add(
-      mongoClient.db(db_name).collection(collectionName).findOne({ _id: id })
+      mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(id) })
     ))
-
+    // FIXME: pensar ne uma logica para cada id não encontrado
+    // if(set.size === 0) throw new ObjectNotFoundException()
     return set
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   } finally {
-    mongoClient.close()
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
   }
 }
 
@@ -75,17 +95,27 @@ const findAllProducts = async () => {
   } catch (err) {
     console.log(err); // TODO: melhorar tratamento de erro
   } finally {
-    mongoClient.close()
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
   }
 }
 
 const deleteProduct = async (productId: string) => {
   try {
     await mongoClient.connect()
-    return mongoClient.db(db_name).collection(collectionName).deleteOne({ _id: productId })
+    return await mongoClient.db(db_name).collection(collectionName).deleteOne({ "_id": new ObjectId(productId) })
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   } finally {
-    mongoClient.close()
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
   }
 }

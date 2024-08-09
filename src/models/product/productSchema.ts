@@ -20,7 +20,6 @@ export const productSchema = z.object({
     .array().nonempty(),
   color: z.string({ message: "Must input at least one color" }).array().nonempty(),
   fabric: z.string().optional(),
-  // size: z.enum(['P', 'M', 'G', 'GG']),
   category: z.string().toUpperCase().array().nonempty(),
   brand: z
     .string({ required_error: "Brand is required" })
@@ -30,5 +29,4 @@ export const productSchema = z.object({
       size: z.enum(['P', 'M', 'G', 'GG']),
       remainingQuantity: z.number().nonnegative().int().safe().default(0)
     }),
-
 })
