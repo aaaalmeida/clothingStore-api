@@ -30,7 +30,6 @@ const mongoClient = new MongoClient(url)
   DELETE
 */
 
-
 const addProduct = async (data: IProduct) => {
   try {
     await mongoClient.connect()
@@ -70,11 +69,12 @@ const findManyProducts = async (productsId: string[]) => {
   try {
     await mongoClient.connect()
     const set = new Set()
-    productsId.forEach(id => set.add(
-      mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(id) })
-    ))
+    productsId.forEach(id => {
+      const product = mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(id) })
+      if (product) set.add(product)
+    })
     // FIXME: pensar ne uma logica para cada id não encontrado
-    // if(set.size === 0) throw new ObjectNotFoundException()
+    if (set.size === 0) throw new ObjectNotFoundException("Product List")
     return set
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
@@ -107,7 +107,7 @@ const findAllProducts = async () => {
 const deleteProduct = async (productId: string) => {
   try {
     await mongoClient.connect()
-    return await mongoClient.db(db_name).collection(collectionName).deleteOne({ "_id": new ObjectId(productId) })
+    await mongoClient.db(db_name).collection(collectionName).findOneAndDelete({ "_id": new ObjectId(productId) })
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   } finally {
@@ -119,3 +119,22 @@ const deleteProduct = async (productId: string) => {
       }
   }
 }
+
+const updateProduct = async (productId: string, newProduct: IProduct) => {
+  try {
+    await mongoClient.connect()
+    const product = productSchema.parse(newProduct)
+    return await mongoClient.db(db_name).collection(collectionName).updateOne({ "_id": new ObjectId(productId) }, product)
+  } catch (err) {
+    if (err instanceof ZodError) throw new ObjectValidationException("Product", productId)
+  } finally {
+    if (mongoClient)
+      try {
+        await mongoClient.close()
+      } catch (err) {
+        throw new CloseMongoConnectionException()
+      }
+  }
+}
+
+export { addProduct, findOneProduct, findManyProducts, findAllProducts, deleteProduct, updateProduct }

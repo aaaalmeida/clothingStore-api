@@ -1,7 +1,7 @@
 export class ObjectNotFoundException extends Error {
-  constructor(objectType: string, objectId: string) {
+  constructor(objectType: string, objectId?: string) {
     super()
     this.name = "ObjectNotFoundException"
-    this.message = `Could not find object ${objectType}.`
+    this.message = `Could not find object ${objectType}${objectId}.`
   }
 }
