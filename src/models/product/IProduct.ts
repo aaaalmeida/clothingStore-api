@@ -2,7 +2,7 @@ export type IProduct = {
   name: string,
   price: number,
   description?: string,
-  pictures: string[],
+  pictures?: string[],
   color: string[],
   fabric?: string,
   category: string[],

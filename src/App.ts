@@ -1,8 +1,9 @@
-import express, { Request, Response } from 'express'
-import { testRouter } from '@routes/test/index'
-import dotenv from 'dotenv'
+require('dotenv').config()
 
-dotenv.config()
+import express from 'express'
+import { testRouter } from '@routes/test'
+import { productRouter } from "@routes/product"
+
 
 const app = express()
 
@@ -10,6 +11,7 @@ const PORT = process.env.SERVER_PORT
 
 app.use(express.json())
 
-app.use('/', testRouter)
+app.use('/test', testRouter)
+app.use('/product', productRouter)
 
 app.listen(PORT, () => console.log(`server on port ${PORT}`))

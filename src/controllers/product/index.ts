@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import { MongoClient, ObjectId } from "mongodb"
 import { UndefinedMongoURLException } from "@exceptions/UndefinedMongoURLException"
 import { UndefinedMongoRegexException } from "@exceptions/UndefinedMongoRegexException"
@@ -9,21 +11,22 @@ import { IProduct } from "@models/product/IProduct"
 import { ObjectValidationException } from "@exceptions/ObjectValidationException"
 import { ObjectNotFoundException } from "@exceptions/ObjectNotFoundException"
 
-const url = process.env.MONGODB_URL
-const url_regex_string = process.env.MONGODB_URL_REGEX
-const db_name = process.env.MONGODB_DB_NAME
+const URL = process.env.MONGODB_URL
+const URL_REGEX_STRING = process.env.MONGODB_URL_REGEX
+const DB_NAME = process.env.MONGODB_DB_NAME
 
 const collectionName = 'products'
 
-if (!url) throw new UndefinedMongoURLException()
-if (!url_regex_string) throw new UndefinedMongoRegexException()
-if (new RegExp(url_regex_string).test(url)) throw new InvalidMongoURLException()
 
-const mongoClient = new MongoClient(url)
+if (!URL) throw new UndefinedMongoURLException()
+if (!URL_REGEX_STRING) throw new UndefinedMongoRegexException()
+if (new RegExp(URL_REGEX_STRING).test(URL)) throw new InvalidMongoURLException()
+
+const mongoClient = new MongoClient(URL)
 
 /*
-  ADD
-  FIND ONE
+  X ADD
+  X FIND ONE
   FIND MANY
   FIND ALL
   PATCH
@@ -34,9 +37,12 @@ const addProduct = async (data: IProduct) => {
   try {
     await mongoClient.connect()
     const product = productSchema.parse(data)
-    return await mongoClient.db(db_name).collection(collectionName).insertOne(product)
+    return await mongoClient.db(DB_NAME).collection(collectionName).insertOne(product)
   } catch (err) {
-    if (err instanceof ZodError) throw new ObjectValidationException('Product')
+    if (err instanceof ZodError) {
+      throw err
+    }
+    // throw new ObjectValidationException('Product')
   } finally {
     if (mongoClient)
       try {
@@ -47,11 +53,11 @@ const addProduct = async (data: IProduct) => {
   }
 }
 
-const findOneProduct = async (productId: string) => {
+const findOneProductById = async (id: string) => {
   try {
     await mongoClient.connect()
-    const product = await mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(productId) })
-    if (!product) throw new ObjectNotFoundException("Product", productId)
+    const product = await mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) })
+    if (!product) throw new ObjectNotFoundException("Product", id)
     return product
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
@@ -70,7 +76,7 @@ const findManyProducts = async (productsId: string[]) => {
     await mongoClient.connect()
     const set = new Set()
     productsId.forEach(id => {
-      const product = mongoClient.db(db_name).collection(collectionName).findOne({ "_id": new ObjectId(id) })
+      const product = mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) })
       if (product) set.add(product)
     })
     // FIXME: pensar ne uma logica para cada id não encontrado
@@ -91,7 +97,9 @@ const findManyProducts = async (productsId: string[]) => {
 const findAllProducts = async () => {
   try {
     await mongoClient.connect()
-    return mongoClient.db(db_name).collection(collectionName).find()
+    const data = mongoClient.db(DB_NAME).collection(collectionName).find()
+    console.log(data)
+    return data
   } catch (err) {
     console.log(err); // TODO: melhorar tratamento de erro
   } finally {
@@ -107,7 +115,7 @@ const findAllProducts = async () => {
 const deleteProduct = async (productId: string) => {
   try {
     await mongoClient.connect()
-    await mongoClient.db(db_name).collection(collectionName).findOneAndDelete({ "_id": new ObjectId(productId) })
+    await mongoClient.db(DB_NAME).collection(collectionName).findOneAndDelete({ _id: new ObjectId(productId) })
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   } finally {
@@ -124,7 +132,7 @@ const updateProduct = async (productId: string, newProduct: IProduct) => {
   try {
     await mongoClient.connect()
     const product = productSchema.parse(newProduct)
-    return await mongoClient.db(db_name).collection(collectionName).updateOne({ "_id": new ObjectId(productId) }, product)
+    return await mongoClient.db(DB_NAME).collection(collectionName).updateOne({ _id: new ObjectId(productId) }, product)
   } catch (err) {
     if (err instanceof ZodError) throw new ObjectValidationException("Product", productId)
   } finally {
@@ -137,4 +145,4 @@ const updateProduct = async (productId: string, newProduct: IProduct) => {
   }
 }
 
-export { addProduct, findOneProduct, findManyProducts, findAllProducts, deleteProduct, updateProduct }
+export { addProduct, findOneProductById, findManyProducts, findAllProducts, deleteProduct, updateProduct }
