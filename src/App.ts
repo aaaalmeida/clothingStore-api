@@ -4,7 +4,6 @@ import express from 'express'
 import { testRouter } from '@routes/test'
 import { productRouter } from "@routes/product"
 
-
 const app = express()
 
 const PORT = process.env.SERVER_PORT

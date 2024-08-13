@@ -45,7 +45,10 @@ productRouter.get('/search', async (req: Request, res: Response) => {
 // ex: GET {domain}/allProducts
 productRouter.get('/allProducts', async (req: Request, res: Response) => {
   try {
-    res.status(200).send(await findAllProducts())
+    const data = await findAllProducts()
+    console.log(data);
+    
+    res.status(200).send(data)
   } catch (err) {
     console.log(err)
   }

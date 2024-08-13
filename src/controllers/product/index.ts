@@ -59,8 +59,8 @@ const findOneProductById = async (id: string) => {
     const product = await mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) })
     if (!product) throw new ObjectNotFoundException("Product", id)
     return product
-  } catch (err) {
-    console.log(err) // TODO: melhorar tratamento de erro
+  } catch (err) { // TODO: melhorar tratamento de erro
+    console.log(err)
   } finally {
     if (mongoClient)
       try {
@@ -82,8 +82,8 @@ const findManyProducts = async (productsId: string[]) => {
     // FIXME: pensar ne uma logica para cada id não encontrado
     if (set.size === 0) throw new ObjectNotFoundException("Product List")
     return set
-  } catch (err) {
-    console.log(err) // TODO: melhorar tratamento de erro
+  } catch (err) { // TODO: melhorar tratamento de erro
+    console.log(err)
   } finally {
     if (mongoClient)
       try {
@@ -97,11 +97,13 @@ const findManyProducts = async (productsId: string[]) => {
 const findAllProducts = async () => {
   try {
     await mongoClient.connect()
+    console.log('aaaaaa')
+
     const data = mongoClient.db(DB_NAME).collection(collectionName).find()
-    console.log(data)
+    console.log('d', data)
     return data
-  } catch (err) {
-    console.log(err); // TODO: melhorar tratamento de erro
+  } catch (err) { // TODO: melhorar tratamento de erro
+    console.log(err)
   } finally {
     if (mongoClient)
       try {
@@ -116,8 +118,8 @@ const deleteProduct = async (productId: string) => {
   try {
     await mongoClient.connect()
     await mongoClient.db(DB_NAME).collection(collectionName).findOneAndDelete({ _id: new ObjectId(productId) })
-  } catch (err) {
-    console.log(err) // TODO: melhorar tratamento de erro
+  } catch (err) { // TODO: melhorar tratamento de erro
+    console.log(err)
   } finally {
     if (mongoClient)
       try {
@@ -133,7 +135,7 @@ const updateProduct = async (productId: string, newProduct: IProduct) => {
     await mongoClient.connect()
     const product = productSchema.parse(newProduct)
     return await mongoClient.db(DB_NAME).collection(collectionName).updateOne({ _id: new ObjectId(productId) }, product)
-  } catch (err) {
+  } catch (err) { // TODO: melhorar tratamento de erro
     if (err instanceof ZodError) throw new ObjectValidationException("Product", productId)
   } finally {
     if (mongoClient)
