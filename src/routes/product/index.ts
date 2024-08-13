@@ -46,8 +46,6 @@ productRouter.get('/search', async (req: Request, res: Response) => {
 productRouter.get('/allProducts', async (req: Request, res: Response) => {
   try {
     const data = await findAllProducts()
-    console.log(data);
-    
     res.status(200).send(data)
   } catch (err) {
     console.log(err)

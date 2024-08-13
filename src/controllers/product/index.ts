@@ -37,6 +37,8 @@ const addProduct = async (data: IProduct) => {
   try {
     await mongoClient.connect()
     const product = productSchema.parse(data)
+    console.log(product);
+
     return await mongoClient.db(DB_NAME).collection(collectionName).insertOne(product)
   } catch (err) {
     if (err instanceof ZodError) {
@@ -44,12 +46,11 @@ const addProduct = async (data: IProduct) => {
     }
     // throw new ObjectValidationException('Product')
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
@@ -62,12 +63,11 @@ const findOneProductById = async (id: string) => {
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
@@ -85,32 +85,27 @@ const findManyProducts = async (productsId: string[]) => {
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
 const findAllProducts = async () => {
   try {
     await mongoClient.connect()
-    console.log('aaaaaa')
-
-    const data = mongoClient.db(DB_NAME).collection(collectionName).find()
-    console.log('d', data)
+    const data = await mongoClient.db(DB_NAME).collection(collectionName).find({}).toArray()
     return data
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
@@ -121,12 +116,11 @@ const deleteProduct = async (productId: string) => {
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
@@ -138,12 +132,11 @@ const updateProduct = async (productId: string, newProduct: IProduct) => {
   } catch (err) { // TODO: melhorar tratamento de erro
     if (err instanceof ZodError) throw new ObjectValidationException("Product", productId)
   } finally {
-    if (mongoClient)
-      try {
-        await mongoClient.close()
-      } catch (err) {
-        throw new CloseMongoConnectionException()
-      }
+    try {
+      await mongoClient.close()
+    } catch (err) {
+      throw new CloseMongoConnectionException()
+    }
   }
 }
 
