@@ -37,8 +37,6 @@ const addProduct = async (data: IProduct) => {
   try {
     await mongoClient.connect()
     const product = productSchema.parse(data)
-    console.log(product);
-
     return await mongoClient.db(DB_NAME).collection(collectionName).insertOne(product)
   } catch (err) {
     if (err instanceof ZodError) {
@@ -71,27 +69,64 @@ const findOneProductById = async (id: string) => {
   }
 }
 
+// const findManyProducts = async (productsId: string[]) => {
+//   try {
+//     await mongoClient.connect()
+//     const set = new Set()
+//     productsId.forEach(async id => {
+
+//       const product = await mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) })
+//       if (product) set.add(product)
+//     })
+//     // FIXME: pensar ne uma logica para cada id não encontrado
+//     if (set.size === 0) throw new ObjectNotFoundException("Product List")
+//     return set
+//   } catch (err) { // TODO: melhorar tratamento de erro
+//     console.log(err)
+//   } finally {
+//     try {
+//       await mongoClient.close()
+//     } catch (err) {
+//       throw new CloseMongoConnectionException()
+//     }
+//   }
+// }
+
+
 const findManyProducts = async (productsId: string[]) => {
   try {
-    await mongoClient.connect()
-    const set = new Set()
-    productsId.forEach(id => {
-      const product = mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) })
-      if (product) set.add(product)
-    })
-    // FIXME: pensar ne uma logica para cada id não encontrado
-    if (set.size === 0) throw new ObjectNotFoundException("Product List")
-    return set
-  } catch (err) { // TODO: melhorar tratamento de erro
-    console.log(err)
+    await mongoClient.connect();
+    const products = await Promise.all(
+      productsId.map(async (id) => {
+        try {
+          const product = await mongoClient.db(DB_NAME).collection(collectionName).findOne({ _id: new ObjectId(id) });
+          return product;
+        } catch (err) {
+          console.error(`Erro ao buscar produto com ID ${id}:`, err);
+          return null; // Se ocorrer um erro ao buscar um produto específico, retornamos null.
+        }
+      })
+    );
+
+    const validProducts = products.filter((product) => product !== null);
+
+    // if (validProducts.length === 0) throw new ObjectNotFoundException("Product Array");
+    console.log(validProducts);
+    
+    return validProducts;
+  } catch (err) {
+    console.error('Erro ao buscar produtos:', err);
+    throw new Error('Erro ao buscar produtos'); // Lance o erro para que ele seja capturado no controlador da rota
   } finally {
     try {
-      await mongoClient.close()
+      await mongoClient.close();
     } catch (err) {
-      throw new CloseMongoConnectionException()
+      console.error('Erro ao fechar conexão MongoDB:', err);
+      throw new CloseMongoConnectionException();
     }
   }
-}
+};
+
 
 const findAllProducts = async () => {
   try {
@@ -100,6 +135,7 @@ const findAllProducts = async () => {
     return data
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
+    return []
   } finally {
     try {
       await mongoClient.close()

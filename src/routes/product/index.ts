@@ -1,15 +1,15 @@
 import { Router, Request, Response } from 'express'
 import { addProduct, deleteProduct, findAllProducts, findManyProducts, findOneProductById, updateProduct } from '@controllers/product'
+import { IProduct } from '@models/product/IProduct'
 
 export const productRouter = Router()
 
-// FIXME:
 // add product
 // ex: POST {domain}/
-// body: { "productId": string }
+// use req.body = productSchema
 productRouter.post('/', async (req: Request, res: Response) => {
   try {
-    const data = req.body._id
+    const data = req.body as IProduct
     res.status(201).send(await addProduct(data))
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
@@ -33,7 +33,7 @@ productRouter.get('/:productId', async (req: Request, res: Response) => {
 productRouter.get('/search', async (req: Request, res: Response) => {
   try {
     const data = req.query.productId as string[]
-    res.status(200).send(await findManyProducts(data))
+    res.status(200).json(await findManyProducts(data))
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
   }
