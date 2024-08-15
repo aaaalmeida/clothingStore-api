@@ -61,3 +61,14 @@ productRouter.get('/:productId', async (req: Request, res: Response) => {
     res.status(500).send("Internal Error")
   }
 })
+
+productRouter.patch('/:productId', async (req: Request, res, Response) => {
+  try {
+    const { productId } = req.params
+    
+    res.status(202)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send("Internal Error")
+  }
+})
