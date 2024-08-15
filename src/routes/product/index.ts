@@ -13,6 +13,40 @@ productRouter.post('/', async (req: Request, res: Response) => {
     res.status(201).send(await addProduct(data))
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
+    res.status(500).send("Internal Error")
+  }
+})
+
+// find many products by id
+// ex: GET {domain}/search?productId=[pd1]&productId=[pd2]&productId=[pd3]... (Query String Parameters)
+productRouter.get('/search', async (req: Request, res: Response) => {
+  try {
+    let productIds = req.query.productId as string[]
+
+    if (!Array.isArray(productIds))
+      productIds = [req.query.productId as string]
+
+    if (!productIds || productIds.length === 0) {
+      return res.status(400).send({ error: 'Product IDs are required' })
+    }
+
+    const products = await findManyProducts(productIds)
+    res.status(200).send(products)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({ err })
+  }
+})
+
+// find all products by id
+// ex: GET {domain}/allProducts
+productRouter.get('/allProducts', async (req: Request, res: Response) => {
+  try {
+    const data = await findAllProducts()
+    res.status(200).send(data)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send("Internal Error")
   }
 })
 
@@ -24,30 +58,6 @@ productRouter.get('/:productId', async (req: Request, res: Response) => {
     res.status(200).send(await findOneProductById(productId))
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
-  }
-})
-
-// TODO: testar
-// find many products by id
-// ex: GET {domain}/search?id=[productId1],[productId2],[productId3]... (Query String Parameters)
-productRouter.get('/search', async (req: Request, res: Response) => {
-  try {
-    const data = req.query.productId as string[]
-    res.status(200).json(await findManyProducts(data))
-  } catch (err) {
-    console.log(err) // TODO: melhorar tratamento de erro
-  }
-})
-
-
-// TODO: testar
-// find all products by id
-// ex: GET {domain}/allProducts
-productRouter.get('/allProducts', async (req: Request, res: Response) => {
-  try {
-    const data = await findAllProducts()
-    res.status(200).send(data)
-  } catch (err) {
-    console.log(err)
+    res.status(500).send("Internal Error")
   }
 })
