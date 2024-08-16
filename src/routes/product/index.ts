@@ -6,7 +6,7 @@ export const productRouter = Router()
 
 // add product
 // ex: POST {domain}/
-// use req.body = productSchema
+// req.body = productSchema (Body Parameters)
 productRouter.post('/', async (req: Request, res: Response) => {
   try {
     const data = req.body as IProduct
@@ -50,25 +50,35 @@ productRouter.get('/allProducts', async (req: Request, res: Response) => {
   }
 })
 
+// update product by id
+// ex: GET {domain}/[productId] (Path Parameters)
+// req.body = productSchema (Body Parameters)
+productRouter.patch('/:productId', async (req: Request, res, Response) => {
+  try {
+    const { productId } = req.params
+    const updatedData = req.body
+
+    const result = await updateProduct(productId, updatedData)
+
+    if (result!.matchedCount === 0) {
+      return res.status(404).send({ message: 'Product not found' })
+    }
+
+    res.status(200).send({ message: `Product ${productId} updated` })
+  } catch (err) {
+    console.log(err)
+    res.status(500).send("Internal Error")
+  }
+})
+
 // find product by id
-// ex: GET {domain}/[productId] (Route Parameters)
+// ex: GET {domain}/[productId] (Path Parameters)
 productRouter.get('/:productId', async (req: Request, res: Response) => {
   try {
     const { productId } = req.params
     res.status(200).send(await findOneProductById(productId))
   } catch (err) {
     console.log(err) // TODO: melhorar tratamento de erro
-    res.status(500).send("Internal Error")
-  }
-})
-
-productRouter.patch('/:productId', async (req: Request, res, Response) => {
-  try {
-    const { productId } = req.params
-    
-    res.status(202)
-  } catch (err) {
-    console.log(err)
     res.status(500).send("Internal Error")
   }
 })

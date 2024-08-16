@@ -95,7 +95,7 @@ const findOneProductById = async (id: string) => {
 
 const findManyProducts = async (productIds: string[]) => {
   try {
-    await mongoClient.connect();
+    await mongoClient.connect()
 
     const objectIds = productIds.map(id => {
       if (ObjectId.isValid(id)) {
@@ -151,11 +151,24 @@ const deleteProduct = async (productId: string) => {
   }
 }
 
-const updateProduct = async (productId: string, newProduct: IProduct) => {
+const updateProduct = async (productId: string, updateData: Partial<IProduct>) => {
   try {
     await mongoClient.connect()
-    const product = productSchema.parse(newProduct)
-    return await mongoClient.db(DB_NAME).collection(collectionName).updateOne({ _id: new ObjectId(productId) }, product)
+    
+    // filtra chaves não pertencentes a produto
+    const validUpdateData = Object.keys(updateData)
+      .filter(key => key in updateData && updateData[key as keyof IProduct] !== undefined)
+      .reduce((obj, key) => {
+        return { ...obj, [key]: updateData[key as keyof IProduct] }
+      }, {})
+      
+      const result = await mongoClient.db(DB_NAME).collection(collectionName).updateOne({ _id: new ObjectId(productId) }, { $set: validUpdateData })
+
+    if (result.matchedCount === 0) {
+      throw new Error('Product not found')
+    }
+
+    return result
   } catch (err) { // TODO: melhorar tratamento de erro
     if (err instanceof ZodError) throw new ObjectValidationException("Product", productId)
   } finally {
