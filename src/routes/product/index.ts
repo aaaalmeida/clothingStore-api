@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { addProduct, deleteProduct, findAllProducts, findManyProducts, findOneProductById, updateProduct } from '@controllers/product'
+import { addProduct, deleteProductById, findAllProducts, findManyProducts, findOneProductById, updateProduct } from '@controllers/product'
 import { IProduct } from '@models/product/IProduct'
 
 export const productRouter = Router()
@@ -30,8 +30,12 @@ productRouter.get('/search', async (req: Request, res: Response) => {
       return res.status(400).send({ error: 'Product IDs are required' })
     }
 
-    const products = await findManyProducts(productIds)
-    res.status(200).send(products)
+    const response = await findManyProducts(productIds)
+
+    if(response.length === 0)
+      res.status(404).send({message: 'Products not found'})
+
+    res.status(200).send(response)
   } catch (err) {
     console.log(err)
     res.status(500).send({ err })
@@ -65,6 +69,21 @@ productRouter.patch('/:productId', async (req: Request, res, Response) => {
     }
 
     res.status(200).send({ message: `Product ${productId} updated` })
+  } catch (err) {
+    console.log(err)
+    res.status(500).send("Internal Error")
+  }
+})
+
+productRouter.delete('/:productId', async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params
+    const result = await deleteProductById(productId)
+
+    if (result!.deletedCount === 0)
+      res.status(404).send({ message: 'Product not found' })
+
+    res.status(200).send(result)
   } catch (err) {
     console.log(err)
     res.status(500).send("Internal Error")

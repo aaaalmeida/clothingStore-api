@@ -136,10 +136,10 @@ const findAllProducts = async () => {
   }
 }
 
-const deleteProduct = async (productId: string) => {
+const deleteProductById = async (productId: string) => {
   try {
     await mongoClient.connect()
-    await mongoClient.db(DB_NAME).collection(collectionName).findOneAndDelete({ _id: new ObjectId(productId) })
+    return await mongoClient.db(DB_NAME).collection(collectionName).deleteOne({ _id: new ObjectId(productId) })
   } catch (err) { // TODO: melhorar tratamento de erro
     console.log(err)
   } finally {
@@ -180,4 +180,4 @@ const updateProduct = async (productId: string, updateData: Partial<IProduct>) =
   }
 }
 
-export { addProduct, findOneProductById, findManyProducts, findAllProducts, deleteProduct, updateProduct }
+export { addProduct, findOneProductById, findManyProducts, findAllProducts, deleteProductById, updateProduct }
