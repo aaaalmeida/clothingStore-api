@@ -4,7 +4,10 @@
   "description": "clothing store api",
   "main": "app.js",
   "scripts": {
-    "dev": "tsx watch src/App.ts"
+    "dev": "tsx watch src/App.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -18,7 +21,8 @@
     "mongodb",
     "atlas",
     "express",
-    "zod"
+    "zod",
+    "jest"
   ],
   "author": "aaalmeida",
   "license": "ISC",
@@ -34,7 +38,13 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^22.1.0",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.4",
+    "ts-node": "^10.9.2",
     "tsx": "^4.16.5",
     "typescript": "^5.5.4"
   }

@@ -75,6 +75,8 @@ productRouter.patch('/:productId', async (req: Request, res, Response) => {
   }
 })
 
+// delete product by id
+// ex: DELETE {domain}/[productId] (Path Parameters)
 productRouter.delete('/:productId', async (req: Request, res: Response) => {
   try {
     const { productId } = req.params
