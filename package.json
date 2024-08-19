@@ -15,14 +15,14 @@
   },
   "keywords": [
     "REST",
-    "RESTful",
     "nodejs",
     "typescript",
     "mongodb",
     "atlas",
     "express",
     "zod",
-    "jest"
+    "jest",
+    "supertest"
   ],
   "author": "aaalmeida",
   "license": "ISC",

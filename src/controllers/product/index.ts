@@ -11,7 +11,7 @@ import { IProduct } from "@models/product/IProduct"
 import { ObjectValidationException } from "@exceptions/ObjectValidationException"
 import { ObjectNotFoundException } from "@exceptions/ObjectNotFoundException"
 import { InvalidObjectIdException } from "@exceptions/InvalidObjectIdException"
-
+import {} from '@src/App'
 const URL = process.env.MONGODB_URL
 const URL_REGEX_STRING = process.env.MONGODB_URL_REGEX
 const DB_NAME = process.env.MONGODB_DB_NAME
